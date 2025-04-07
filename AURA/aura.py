@@ -1,4 +1,4 @@
-#AURA - Attendance with Unique Recognition and Audio
+# AURA - Attendance with Unique Recognition and Audio
 
 import cv2
 import threading
@@ -9,7 +9,7 @@ import json
 import signal
 import sys
 
-teacher_verified = True
+teacher_verified = False
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
@@ -18,6 +18,10 @@ reference_img = cv2.imread("teacher.jpg")
 attendance = {}
 listening = False
 lock = threading.Lock()
+
+class_list = ["John", "Emma", "Liam", "Olivia", "Noah", "Ava"]
+
+today = datetime.date.today().isoformat()
 
 def verify_teacher_face(frame):
     global teacher_verified
@@ -38,7 +42,7 @@ def listen_for_students():
             recognizer.adjust_for_ambient_noise(source)
             audio = recognizer.listen(source, timeout=5)
             command = recognizer.recognize_google(audio).lower()
-            print("NAME HEARD", command)
+            print("NAME HEARD:", command)
 
             if "present mam" in command:
                 name = command.replace("present mam", "").strip().title()
@@ -60,14 +64,37 @@ def mark_attendance(name):
             save_attendance()
 
 def save_attendance():
+    try:
+        with open("attendance.json", "r") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = {}
+
+    if today not in data:
+        data[today] = {}
+
+    data[today].update(attendance)
+
     with open("attendance.json", "w") as f:
-        json.dump(attendance, f, indent=4)
+        json.dump(data, f, indent=4)
 
 def graceful_exit(signum, frame):
     print("\n[INFO] ATTENDANCE CLOSED!")
     cap.release()
     cv2.destroyAllWindows()
+
+    save_attendance()
+    present_students = list(attendance.keys())
+    absent_students = [student for student in class_list if student not in present_students]
+
+    print(f"\nSummary for {today}:")
+    print(f"Present ({len(present_students)}): {', '.join(present_students) if present_students else 'None'}")
+    print(f"Absent ({len(absent_students)}): {', '.join(absent_students) if absent_students else 'None'}")
+
     sys.exit(0)
+
+signal.signal(signal.SIGINT, graceful_exit)
+signal.signal(signal.SIGTERM, graceful_exit)
 
 frame_counter = 0
 while True:
@@ -83,14 +110,13 @@ while True:
         if not listening:
             threading.Thread(target=listen_for_students).start()
     else:
-        cv2.putText(frame, "SCANNING FOR TEACHERS' FACE!", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        cv2.putText(frame, "SCANNING FOR TEACHER'S FACE!", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     cv2.imshow("AURA", frame)
 
     if cv2.waitKey(1) == ord('q'):
-        break
+        graceful_exit(None, None)
+
     frame_counter += 1
 
-signal.signal(signal.SIGINT, graceful_exit)
-signal.signal(signal.SIGTERM, graceful_exit)
 cap.release()
 cv2.destroyAllWindows()

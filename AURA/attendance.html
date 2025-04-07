@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AURA - Attendance with Unique Recognition and Audio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 60%;
+    }
+    th, td {
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background: #0078d4;
+      color: white;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>AURA</h1>
+  <button onclick="loadAttendance()">Refresh Attendance</button>
+  <table id="attendance-table">
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        <th>Time Marked Present</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function loadAttendance() {
+      try {
+        const res = await fetch('attendance.json');
+        const data = await res.json();
+
+        const tbody = document.querySelector('#attendance-table tbody');
+        tbody.innerHTML = "";
+
+        Object.entries(data).forEach(([name, time]) => {
+          const row = `<tr><td>${name}</td><td>${time}</td></tr>`;
+          tbody.innerHTML += row;
+        });
+      } catch (err) {
+        alert("Could not load attendance.json. Make sure the Python script is running and attendance.json exists.");
+      }
+    }
+
+    setInterval(loadAttendance, 15000);
+    loadAttendance();
+  </script>
+</body>
+</html>

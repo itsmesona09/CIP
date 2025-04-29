@@ -1,122 +1,88 @@
-# AURA - Attendance with Unique Recognition and Audio
-
 import cv2
-import threading
-from deepface import DeepFace
-import speech_recognition as sr
-import datetime
+import numpy as np
+import face_recognition
+import os
+from datetime import datetime
 import json
-import signal
-import sys
 
-teacher_verified = False
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+path = 'Images_Attendance'
+attendance_file = 'attendance.json'
 
-reference_img = cv2.imread("teacher.jpg")
-attendance = {}
-listening = False
-lock = threading.Lock()
+images = []
+classNames = []
 
-class_list = ["John", "Emma", "Liam", "Olivia", "Noah", "Ava"]
+myList = os.listdir(path)
 
-today = datetime.date.today().isoformat()
+for cl in myList:
+    curImg = cv2.imread(f'{path}/{cl}')
+    images.append(curImg)
+    classNames.append(os.path.splitext(cl)[0])
 
-def verify_teacher_face(frame):
-    global teacher_verified
-    try:
-        result = DeepFace.verify(frame, reference_img.copy())
-        teacher_verified = result['verified']
-    except:
-        teacher_verified = False
+def findEncodings(images):
+    encodeList = []
+    for img in images:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        encode = face_recognition.face_encodings(img)[0]
+        encodeList.append(encode)
+    return encodeList
 
-def listen_for_students():
-    global listening
-    listening = True
-    recognizer = sr.Recognizer()
+def markAttendance(name, date_today):
+    if os.path.exists(attendance_file):
+        try:
+            with open(attendance_file, 'r') as f:
+                attendance_data = json.load(f)
+        except json.JSONDecodeError:
+            attendance_data = {}
+    else:
+        attendance_data = {}
 
-    try:
-        with sr.Microphone() as source:
-            print("MARKING ATTENDANCE!")
-            recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source, timeout=5)
-            command = recognizer.recognize_google(audio).lower()
-            print("NAME HEARD:", command)
+    if date_today not in attendance_data:
+        attendance_data[date_today] = []
 
-            if "present mam" in command:
-                name = command.replace("present mam", "").strip().title()
-                if not name:
-                    name = "Unknown Student"
-                mark_attendance(name)
+    if name not in attendance_data[date_today]:
+        attendance_data[date_today].append(name)
 
-    except Exception as e:
-        print("Error in speech recognition:", e)
-    finally:
-        listening = False
+    with open(attendance_file, 'w') as f:
+        json.dump(attendance_data, f, indent=4)
 
-def mark_attendance(name):
-    with lock:
-        if name and name not in attendance:
-            now = datetime.datetime.now().strftime("%H:%M:%S")
-            attendance[name] = now
-            print(f"{name} marked present at {now}")
-            save_attendance()
+encodeListKnown = findEncodings(images)
 
-def save_attendance():
-    try:
-        with open("attendance.json", "r") as f:
-            data = json.load(f)
-    except FileNotFoundError:
-        data = {}
+cap = cv2.VideoCapture(1)
 
-    if today not in data:
-        data[today] = {}
-
-    data[today].update(attendance)
-
-    with open("attendance.json", "w") as f:
-        json.dump(data, f, indent=4)
-
-def graceful_exit(signum, frame):
-    print("\n[INFO] ATTENDANCE CLOSED!")
-    cap.release()
-    cv2.destroyAllWindows()
-
-    save_attendance()
-    present_students = list(attendance.keys())
-    absent_students = [student for student in class_list if student not in present_students]
-
-    print(f"\nSummary for {today}:")
-    print(f"Present ({len(present_students)}): {', '.join(present_students) if present_students else 'None'}")
-    print(f"Absent ({len(absent_students)}): {', '.join(absent_students) if absent_students else 'None'}")
-
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, graceful_exit)
-signal.signal(signal.SIGTERM, graceful_exit)
-
-frame_counter = 0
 while True:
-    ret, frame = cap.read()
-    if not ret:
+    success, img = cap.read()
+    if not success:
         break
 
-    if not teacher_verified and frame_counter % 30 == 0:
-        threading.Thread(target=verify_teacher_face, args=(frame.copy(),)).start()
+    imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
+    imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
 
-    if teacher_verified:
-        cv2.putText(frame, "WELCOME TEACHER!", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        if not listening:
-            threading.Thread(target=listen_for_students).start()
-    else:
-        cv2.putText(frame, "SCANNING FOR TEACHER'S FACE!", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-    cv2.imshow("AURA", frame)
+    facesCurFrame = face_recognition.face_locations(imgS, model="hog")
+    encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
-    if cv2.waitKey(1) == ord('q'):
-        graceful_exit(None, None)
+    time_now = datetime.now()
+    date_today = time_now.strftime('%d/%m/%Y')
 
-    frame_counter += 1
+    for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
+        matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
+        faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
+
+        matchIndex = np.argmin(faceDis)
+        if matches[matchIndex]:
+            name = classNames[matchIndex].upper()
+
+            y1, x2, y2, x1 = faceLoc
+            y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
+            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 250, 0), cv2.FILLED)
+            cv2.putText(img, name, (x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+
+            markAttendance(name, date_today)
+
+    cv2.imshow('webcam', img)
+
+    if cv2.waitKey(10) == 13:
+        break
 
 cap.release()
 cv2.destroyAllWindows()

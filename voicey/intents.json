@@ -1,0 +1,28 @@
+{
+    "intents": [
+      {"tag": "greeting", "pattern": ["Hi", "Hey", "Hello", "Good morning", "Good evening", "What's up"], "responses": ["Hello!", "Hi there!", "Hey! How can I help you today?", "Greetings!"]},
+      {"tag": "goodbye", "pattern": ["Bye", "See you", "Goodbye", "Catch you later", "Talk to you later"], "responses": ["Goodbye!", "See you soon!", "Take care!", "Later!"]},
+      {"tag": "thanks", "pattern": ["Thanks", "Thank you", "That's helpful", "Thanks a lot", "Much appreciated"], "responses": ["You're welcome!", "Glad I could help!", "No problem!", "Anytime!"]},
+      {"tag": "weather", "pattern": ["What's the weather like", "Tell me the weather", "How's the weather today?", "Weather update"], "responses": ["Checking the weather now...", "Let me get the latest weather forecast for you..."]},
+      {"tag": "creator", "pattern": ["Who created you", "Who is your developer", "Who made you", "Who built you"], "responses": ["I was created by Sona", "A smart human built me."]},
+      {"tag": "open_youtube", "pattern": ["open youtube", "go to youtube", "start youtube"], "responses": ["Opening YouTube..."], "action_url": "https://www.youtube.com"},
+      {"tag": "open_google", "pattern": ["open google", "search google"], "responses": ["Opening Google..."], "action_url": "https://www.google.com"},
+      {"tag": "date", "pattern": ["what's the date", "today's date", "tell me the date"], "responses": ["Here's the date for today."], "action_url": "date"},
+      {"tag": "time", "pattern": ["what time is it", "tell me the time", "current time"], "responses": ["Let me check the time for you."], "action_url": "time"},
+      {"tag": "joke", "pattern": ["Tell me a joke", "Make me laugh", "Do you know any jokes"], "responses": ["Why don’t scientists trust atoms? Because they make up everything!", "I'm reading a book on anti-gravity. It's impossible to put down!"]},
+      {"tag": "news", "pattern": ["What's the news today", "Show me the news", "Tell me the latest news"], "responses": ["Fetching the latest news headlines...", "Here’s what’s happening in the world..."]},
+      {"tag": "music", "pattern": ["Play some music", "I want to hear music", "Start playing songs"], "responses": ["Sure! Playing your favorite tunes...", "Let’s get the music started!"]},
+      {"tag": "name", "pattern": ["What is your name", "Who are you", "Do you have a name"], "responses": ["I'm your voice assistant!", "You can call me Assistify!", "I’m here to help—no fancy name needed!"]},
+      {"tag": "fun_fact", "pattern": ["Tell me a fun fact", "Say something interesting", "Do you know any fun facts"], "responses": ["Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old!", "Bananas are berries, but strawberries aren't!"]},
+      {"tag": "create_note", "pattern": ["Make a note", "Write this down", "Create a note", "Take a note"], "responses": ["Sure, I'm ready to take your note.", "What should I write down?"]},
+      {"tag": "add_todo", "pattern": ["Add to my todo list", "Remember this task", "New todo item", "Add a new task"], "responses": ["Okay, what should I add?", "Tell me what to add to your todo list."]},
+      {"tag": "show_todos", "pattern": ["What are my todos", "Show my tasks", "List my todos", "Todo list"], "responses": ["Here are your todos:", "These are the items on your todo list."]},
+      {"tag": "exit", "pattern": ["Exit", "Goodbye", "Quit", "Close the assistant", "Bye"], "responses": ["Goodbye!", "See you soon!", "Shutting down now."]},
+      {"tag": "play_fav_music", "pattern": ["Play my song", "Play favorite song", "Play The Weeknd", "Is there someone else"], "responses": ["Playing our The Weeknd Song! We go sing together now!"], "action_url": "https://music.apple.com/in/album/is-there-someone-else/1603164027?i=1603164471"},
+      {"tag": "deep_questions", "pattern": ["What is the meaning of life", "Do you think robots dream", "Can AI fall in love", "What's the purpose of existence"], "responses": ["Tough question. Some say it's 42 😉", "Maybe one day, AI will dream too...", "Love? I might not feel it, but I get why it matters.", "Existence is what you make of it, human or not!"]},
+      {"tag": "random_fact", "pattern": ["Surprise me", "Say something random", "Give me a fun fact", "Blow my mind"], "responses": ["Did you know octopuses have three hearts?", "Sharks existed before trees 🌳🦈", "Sloths can hold their breath longer than dolphins!", "Humans share about 60% of their DNA with bananas 🍌"]},
+      {"tag": "trivia", "pattern": ["Ask me a trivia question", "Give me a brain teaser", "Challenge me", "I want a riddle"], "responses": ["Here's one: What comes once in a minute, twice in a moment, but never in a thousand years?", "Let’s test you: I speak without a mouth and hear without ears. What am I?"]},
+      {"tag": "game_suggestions", "pattern": ["Suggest a game to play", "Recommend a mobile game", "Bored... any game ideas?", "Fun games to try?"], "responses": ["Try 'Monument Valley'—it’s a beautiful puzzle game!", "‘Among Us’ is fun with friends 🕵️‍♂️", "‘Alto's Odyssey’ is chill and relaxing.", "Feeling nostalgic? Try Snake 🐍 or Tetris!"]}
+    ]    
+}
+  

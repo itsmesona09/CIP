@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 50px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.banner {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 24px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile button {
+    margin-left: 10px;
+}
+
+.class-list, .attendance-sheet {
+    padding: 20px;
+}
+
+.class-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.class-list li {
+    margin: 10px 0;
+}
+
+.attendance-sheet table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attendance-sheet th, .attendance-sheet td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.attendance-sheet th {
+    background-color: #4CAF50;
+    color: white;
+}

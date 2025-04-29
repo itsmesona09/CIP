@@ -1,0 +1,85 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: url('https://example.com/cartoon-background.jpg') no-repeat center center fixed; /* Replace with your cartoon image URL */
+    background-size: cover; /* Cover the entire background */
+    color: #333;
+    height: 100vh; /* Full height of the viewport */
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Full height */
+}
+
+form {
+    background: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%; /* Full width with some padding */
+    max-width: 500px; /* Maximum width for larger screens */
+}
+
+h2 {
+    text-align: center;
+    color: #800080; /* Darker purple for the heading */
+    margin-bottom: 20px;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #800080; /* Darker purple for labels */
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input:focus {
+    border: 2px solid purple;
+    outline: none;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 2px solid #d5d5d5; /* Border color */
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #800080; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+button {
+    padding: 15px;
+    background-color: #800080; /* Button background color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff7e5f; /* Change button color on hover */
+}
